@@ -5,35 +5,38 @@ from core.helpers import eigen_system
 
 class LinearCollapse:
     """
-    Semantic contract:
+    Semantic intent of this sequence:
+
     CENTER  : space is transformed
-    LEFT    : invariants (eigenvectors)
+    LEFT    : invariant directions (eigenvectors)
     RIGHT   : unstable frame (basis)
     TOP     : operator fingerprint (spectrum)
-    OVERLAY : eigen-structure anchor (Ax = λx)
+    FLASH   : equation anchor (Ax = λx)
+
+    The equation is an ORIENTATION signal, not a lesson.
     """
 
     def __init__(self, scene):
         self.scene = scene
 
     def build(self):
-        # -----------------------------
+        # -------------------------------------------------
         # Core mathematical objects
-        # -----------------------------
+        # -------------------------------------------------
         grid, basis, eigen = eigen_system()
 
         grid.move_to(ORIGIN)
         eigen.shift(LEFT * 3)
         basis.shift(RIGHT * 3)
 
-        # -----------------------------
+        # -------------------------------------------------
         # Linear operator (shear)
-        # -----------------------------
+        # -------------------------------------------------
         shear = grid.copy().apply_matrix([[1, 1], [0, 1]])
 
-        # -----------------------------
+        # -------------------------------------------------
         # Spectrum (analysis layer)
-        # -----------------------------
+        # -------------------------------------------------
         spectrum = VGroup(*[
             Rectangle(height=h, width=0.18, color=YELLOW)
             for h in [0.8, 1.3, 1.0, 1.8]
@@ -41,27 +44,28 @@ class LinearCollapse:
 
         spectrum.shift(UP * 2.5)
 
-        # -----------------------------
-        # Equation anchor (VISIBLE)
-        # -----------------------------
+        # -------------------------------------------------
+        # Equation anchor (TEMPORARY, ALWAYS ON TOP)
+        # -------------------------------------------------
         equation = MathTex("A x = \\lambda x")
         equation.scale(1.0)
         equation.set_opacity(0.95)
         equation.move_to(DOWN * 1.5)
-        equation.set_z_index(100)   # force top layer safely
 
-        # -----------------------------
+        # -------------------------------------------------
         # Return contract
-        # -----------------------------
+        # -------------------------------------------------
         return {
-            "objects": VGroup(grid, basis, eigen, spectrum, equation),
+            # IMPORTANT:
+            # Equation is NOT added here — only structural objects
+            "objects": VGroup(grid, basis, eigen, spectrum),
 
             "animations": [
                 # Space appears and deforms
                 appear(grid, 0.3),
                 morph(grid, shear, 1.2),
 
-                # Frame instability (right)
+                # Coordinate frame instability (right)
                 stagger(
                     flow(basis[0], UP, 0.35, 1.2),
                     flow(basis[1], RIGHT, 0.35, 1.2),
@@ -75,15 +79,15 @@ class LinearCollapse:
                     lag=0.12
                 ),
 
-                # Spectrum emerges (top)
+                # Operator spectrum emerges (top)
                 stagger(
                     *[appear(bar, 0.25) for bar in spectrum],
                     lag=0.1
                 ),
 
-                # Equation anchor (no Scene calls here!)
-                appear(equation, 0.4),
+                # Equation anchor (guaranteed visible)
+                Create(equation, run_time=0.4),
                 Wait(0.6),
-                vanish(equation, 0.4),
+                FadeOut(equation, run_time=0.4),
             ]
         }
