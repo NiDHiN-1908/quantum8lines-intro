@@ -5,15 +5,12 @@ from core.helpers import eigen_system
 
 class LinearCollapse:
     """
-    Semantic intent of this sequence:
+    INTRO MESSAGE:
 
-    CENTER  : space is transformed
-    LEFT    : invariant directions (eigenvectors)
-    RIGHT   : unstable frame (basis)
-    TOP     : operator fingerprint (spectrum)
-    FLASH   : equation anchor (Ax = λx)
-
-    The equation is an ORIENTATION signal, not a lesson.
+    - Space can be transformed
+    - Some directions resist change
+    - Operators have structure
+    - This channel studies eigen-structure
     """
 
     def __init__(self, scene):
@@ -45,19 +42,17 @@ class LinearCollapse:
         spectrum.shift(UP * 2.5)
 
         # -------------------------------------------------
-        # Equation anchor (TEMPORARY, ALWAYS ON TOP)
+        # Equation anchor (DOMINANT, CENTERED)
         # -------------------------------------------------
         equation = MathTex("A x = \\lambda x")
-        equation.scale(1.0)
-        equation.set_opacity(0.95)
-        equation.move_to(DOWN * 1.5)
+        equation.scale(1.6)          # ← big on purpose
+        equation.set_opacity(1.0)
+        equation.move_to(ORIGIN)     # ← center dominance
 
         # -------------------------------------------------
         # Return contract
         # -------------------------------------------------
         return {
-            # IMPORTANT:
-            # Equation is NOT added here — only structural objects
             "objects": VGroup(grid, basis, eigen, spectrum),
 
             "animations": [
@@ -85,9 +80,9 @@ class LinearCollapse:
                     lag=0.1
                 ),
 
-                # Equation anchor (guaranteed visible)
-                Create(equation, run_time=0.4),
-                Wait(0.6),
+                # -------- DOMINANT EQUATION FLASH --------
+                FadeIn(equation, run_time=0.4),
+                Wait(0.8),
                 FadeOut(equation, run_time=0.4),
             ]
         }
