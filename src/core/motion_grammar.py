@@ -1,24 +1,18 @@
 from manim import *
 
-class MotionGrammar:
-    """
-    Motion is language, not decoration.
-    """
+BASE_RT = 0.6
 
-    BASE_RT = 0.6
+def appear(mobj, rt=BASE_RT):
+    return FadeIn(mobj, run_time=rt)
 
-    @staticmethod
-    def appear(mobj, rt=None):
-        return FadeIn(mobj, run_time=rt or MotionGrammar.BASE_RT)
+def vanish(mobj, rt=BASE_RT):
+    return FadeOut(mobj, run_time=rt)
 
-    @staticmethod
-    def vanish(mobj, rt=None):
-        return FadeOut(mobj, run_time=rt or MotionGrammar.BASE_RT)
+def morph(a, b, rt=1.0):
+    return Transform(a, b, run_time=rt)
 
-    @staticmethod
-    def morph(src, target, rt=1.0):
-        return Transform(src, target, run_time=rt)
+def flow(mobj, direction=UP, mag=0.4, rt=1.0):
+    return mobj.animate.shift(direction * mag).set_run_time(rt)
 
-    @staticmethod
-    def flow(mobj, direction=UP, mag=0.4, rt=1.0):
-        return mobj.animate.shift(direction * mag).set_run_time(rt)
+def stagger(*anims, lag=0.15):
+    return LaggedStart(*anims, lag_ratio=lag)

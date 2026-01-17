@@ -9,9 +9,16 @@ from sequences.seq_06_identity import IdentityLock
 
 class Quantum8LinesIntro(Scene):
     def construct(self):
-        self.play(*Disruption(self).animate())
-        self.play(*LinearCollapse(self).animate())
-        self.play(*GeometryInvasion(self).animate())
-        self.play(*OperatorSignal(self).animate())
-        self.play(*ControlledOverload(self).animate())
-        self.play(*IdentityLock(self).animate())
+        sequences = [
+            Disruption(self),
+            LinearCollapse(self),
+            GeometryInvasion(self),
+            OperatorSignal(self),
+            ControlledOverload(self),
+            IdentityLock(self),
+        ]
+
+        for seq in sequences:
+            data = seq.build()
+            self.add(data["objects"])
+            self.play(*data["animations"], run_time=1.8)

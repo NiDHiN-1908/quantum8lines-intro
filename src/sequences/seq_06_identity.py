@@ -1,9 +1,17 @@
 from manim import *
+from core.motion_grammar import *
 
 class IdentityLock:
     def __init__(self, scene):
         self.scene = scene
 
-    def animate(self):
+    def build(self):
         title = Text("Quantum8Lines", weight=BOLD)
-        return [Write(title, run_time=1.2)]
+
+        return {
+            "objects": title,
+            "animations": [
+                appear(title, 0.8),
+                flow(title, DOWN, 0.1, 0.8)
+            ]
+        }
