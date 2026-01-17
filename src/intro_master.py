@@ -10,26 +10,21 @@ from sequences.seq_06_identity import IdentityLock
 
 class Quantum8LinesIntro(Scene):
     def construct(self):
-        # --- Phase 1: Mathematical World (NO LOGO) ---
-        math_sequences = [
+        sequences = [
             Disruption(self),
             LinearCollapse(self),
             GeometryInvasion(self),
             OperatorSignal(self),
+            ControlledOverload(self),
         ]
 
-        for seq in math_sequences:
+        # --- Build the mathematical world ---
+        for seq in sequences:
             data = seq.build()
             self.add(data["objects"])
-            self.play(*data["animations"], run_time=1.8)
+            self.play(*data["animations"], run_time=1.6)
 
-        # --- Phase 2: Concept Compression ---
-        overload = ControlledOverload(self).build()
-        self.add(overload["objects"])
-        self.play(*overload["animations"], run_time=1.2)
-
-        # --- Phase 3: Identity Lock (LOGO ONLY NOW) ---
+        # --- Identity emerges INSIDE the world ---
         identity = IdentityLock(self).build()
-        self.clear()  # <<< THIS IS CRITICAL
         self.add(identity["objects"])
-        self.play(*identity["animations"], run_time=1.5)
+        self.play(*identity["animations"], run_time=1.2)
