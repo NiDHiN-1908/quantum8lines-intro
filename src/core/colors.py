@@ -1,0 +1,6 @@
+from manim import *
+
+PRIMARY = BLUE
+SECONDARY = RED
+ACCENT = YELLOW
+BACKGROUND = BLACK
