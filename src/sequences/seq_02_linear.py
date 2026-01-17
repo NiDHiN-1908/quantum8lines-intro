@@ -7,19 +7,44 @@ class LinearCollapse:
         self.scene = scene
 
     def build(self):
+        # Layer 1: ambient space
         grid, basis, eigen = eigen_system()
 
-        deformed = grid.copy().apply_matrix([[1, 1], [0, 1]])
+        # Layer 2: deformation operator
+        shear = grid.copy().apply_matrix([[1, 1], [0, 1]])
+
+        # Layer 3: spectrum hint (operator effect)
+        spectrum = VGroup(*[
+            Rectangle(height=h, width=0.15, color=YELLOW)
+            for h in [0.8, 1.4, 1.1, 1.9]
+        ]).arrange(RIGHT, buff=0.2).shift(UP * 2)
 
         return {
-            "objects": VGroup(grid, basis, eigen),
+            "objects": VGroup(grid, basis, eigen, spectrum),
+
             "animations": [
-                appear(grid, 0.4),
+                # Grid appears + immediately deforms
+                appear(grid, 0.3),
+                morph(grid, shear, 1.2),
+
+                # Basis vectors drift (frame is unstable)
                 stagger(
-                    morph(grid, deformed, 1.2),
-                    flow(basis, RIGHT, 0.3, 1.2),
+                    flow(basis[0], RIGHT, 0.4, 1.2),
+                    flow(basis[1], UP, 0.4, 1.2),
                     lag=0.1
                 ),
-                flow(eigen, UP, 0.2, 1.2),
+
+                # Eigenvectors resist (key invariant)
+                stagger(
+                    flow(eigen[0], LEFT, 0.1, 1.2),
+                    flow(eigen[1], RIGHT, 0.1, 1.2),
+                    lag=0.1
+                ),
+
+                # Spectrum emerges simultaneously
+                stagger(
+                    *[appear(bar, 0.3) for bar in spectrum],
+                    lag=0.08
+                ),
             ]
         }
