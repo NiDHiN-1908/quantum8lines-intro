@@ -1,111 +1,74 @@
-import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parents[2]))
-
 from manim import *
-from core.chapter_title import chapter_title
-
 
 class Chapter1BirthOfStructure(Scene):
     def construct(self):
+        self.camera.background_color = BLACK
 
-        # -------------------------------------------------
-        # Chapter title (normalized)
-        # -------------------------------------------------
-        chapter_title(self, "Chapter 1 — Structure")
-
-        # -------------------------------------------------
-        # Grid (SPACE IS THE PROTAGONIST)
-        # -------------------------------------------------
-        grid = NumberPlane(
+        # Axes
+        axes = Axes(
             x_range=[-6, 6, 1],
             y_range=[-4, 4, 1],
+            x_length=14,
+            y_length=8,
+            axis_config={
+                "color": WHITE,
+                "stroke_width": 2,
+                "include_ticks": True,
+                "tick_size": 0.08,
+            },
+        )
+
+        # Diagonal grid (subtle depth)
+        grid = NumberPlane(
+            x_range=[-8, 8, 1],
+            y_range=[-5, 5, 1],
             background_line_style={
-                "stroke_opacity": 0.45,   # slightly stronger
-                "stroke_width": 1.2
-            }
+                "stroke_color": BLUE_E,
+                "stroke_width": 1,
+                "stroke_opacity": 0.35,
+            },
+        )
+        grid.rotate(20 * DEGREES)
+
+        # Vectors emerging from origin
+        v1 = Arrow(ORIGIN, 2.5 * RIGHT + 1.2 * UP, buff=0, color=BLUE_B)
+        v2 = Arrow(ORIGIN, 1.8 * LEFT + 1.0 * UP, buff=0, color=BLUE_B)
+        v3 = Arrow(ORIGIN, 1.2 * RIGHT + 0.6 * DOWN, buff=0, color=BLUE_B)
+
+        vectors = VGroup(v1, v2, v3)
+
+        # Invariant horizontal line
+        invariant = Line(
+            start=LEFT * 7,
+            end=RIGHT * 7,
+            color=YELLOW,
+            stroke_width=3,
         )
 
-        axes = Axes(
-            x_range=[-6, 6],
-            y_range=[-4, 4],
-            axis_config={"stroke_opacity": 0.55}
-        )
+        # Equation (minimal, late reveal)
+        equation = MathTex(r"\dot{x} = Ax", color=WHITE).scale(1.2)
+        equation.to_edge(DOWN)
 
-        # Subtle grid intersection emphasis (anchors the field)
-        dots = VGroup(*[
-            Dot(grid.c2p(x, y), radius=0.015, color=BLUE_E)
-            for x in range(-6, 7)
-            for y in range(-4, 5)
-        ])
-        dots.set_opacity(0.25)
+        # --- ANIMATION SEQUENCE ---
 
-        self.add(grid, dots, axes)
-        self.wait(2.0)
-
-        # -------------------------------------------------
-        # Witness vectors (DE-EMPHASIZED)
-        # -------------------------------------------------
-        vectors = VGroup(
-            Vector([2, 1], color=BLUE_C, buff=0, stroke_width=3, tip_length=0.15),
-            Vector([-1.5, 1], color=BLUE_C, buff=0, stroke_width=3, tip_length=0.15),
-        )
-        vectors.set_opacity(0.65)
-
-        self.add(vectors)
-        self.wait(0.6)
-
-        # -------------------------------------------------
-        # First global action
-        # -------------------------------------------------
-        A1 = [[1.25, 0.0],
-              [0.0, 1.0]]
+        self.play(FadeIn(grid, run_time=1.5))
+        self.play(Create(axes, run_time=1.5))
+        self.wait(0.4)
 
         self.play(
-            grid.animate.apply_matrix(A1),
-            axes.animate.apply_matrix(A1),
-            dots.animate.apply_matrix(A1),
-            *[v.animate.apply_matrix(A1) for v in vectors],
-            run_time=3.2
+            LaggedStart(
+                GrowArrow(v1),
+                GrowArrow(v2),
+                GrowArrow(v3),
+                lag_ratio=0.25,
+                run_time=1.6,
+            )
         )
 
-        self.wait(0.6)
+        self.wait(0.3)
 
-        # -------------------------------------------------
-        # Directional bias (still space-first)
-        # -------------------------------------------------
-        A2 = [[1.0, 0.55],
-              [0.0, 1.0]]
+        self.play(Create(invariant, run_time=1.2))
+        self.wait(0.4)
 
-        self.play(
-            grid.animate.apply_matrix(A2),
-            axes.animate.apply_matrix(A2),
-            dots.animate.apply_matrix(A2),
-            *[v.animate.apply_matrix(A2) for v in vectors],
-            run_time=3.6
-        )
-
-        self.wait(0.8)
-
-        # -------------------------------------------------
-        # Constraint reveal (line appears late)
-        # -------------------------------------------------
-        line = Line(LEFT * 5, RIGHT * 5, color=YELLOW)
-        line.set_stroke(width=3)
-
-        self.play(FadeIn(line), run_time=0.6)
-
-        self.play(
-            line.animate.apply_matrix(A1),
-            run_time=2.2
-        )
-
-        self.play(
-            line.animate.apply_matrix(A2),
-            run_time=2.6
-        )
-
-        # -------------------------------------------------
-        # Hold (authority)
-        # -------------------------------------------------
-        self.wait(2.2)
+        self.play(FadeIn(equation, shift=UP * 0.3))
+        self.wait(2)
