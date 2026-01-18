@@ -1,5 +1,5 @@
 from manim import *
-from src.core.chapter_title import chapter_title
+from core.chapter_title import chapter_title
 
 
 class Chapter1LinearStructure(Scene):
@@ -20,7 +20,6 @@ class Chapter1LinearStructure(Scene):
 
         v1 = Vector([2, 0], color=RED)
         v2 = Vector([-2, 0], color=RED)
-
         self.play(GrowArrow(v1), GrowArrow(v2), run_time=0.8)
 
         basis = VGroup(

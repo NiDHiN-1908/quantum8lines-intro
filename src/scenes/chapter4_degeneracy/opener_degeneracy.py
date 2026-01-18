@@ -1,5 +1,5 @@
 from manim import *
-from src.core.chapter_title import chapter_title
+from core.chapter_title import chapter_title
 
 
 class Chapter4Degeneracy(Scene):
