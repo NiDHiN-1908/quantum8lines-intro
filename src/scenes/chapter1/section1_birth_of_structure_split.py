@@ -1,123 +1,77 @@
 from manim import *
 
-# -----------------------------
-# GLOBAL CONFIG (TOP ONLY)
-# -----------------------------
+# Optional: explicitly keep caching ON (default, but safe)
 config.disable_caching = False
-config.frame_rate = 60
-config.pixel_width = 1920
-config.pixel_height = 1080
-config.background_color = BLACK
 
 
-class Chapter1BirthOfStructureSplit(Scene):
+class Section1BirthOfStructureSplit(Scene):
     def construct(self):
+        self.camera.background_color = BLACK
 
-        # =================================================
-        # LEFT SPACE — CAUSE (active deformation)
-        # =================================================
-        left_plane = NumberPlane(
-            x_range=[-6, 6, 1],
-            y_range=[-4, 4, 1],
-            background_line_style={
-                "stroke_color": BLUE_D,
-                "stroke_opacity": 0.4,
-                "stroke_width": 1,
-            },
-        ).shift(LEFT * 4)
+        # -----------------------------
+        # LEFT: original structure
+        # -----------------------------
+        left_shape = Square(
+            side_length=2.2,
+            stroke_color=WHITE,
+            stroke_width=3
+        ).shift(LEFT * 3)
 
-        left_axes = Axes(
-            x_range=[-6, 6],
-            y_range=[-4, 4],
-            axis_config={"stroke_opacity": 0.6},
-        ).shift(LEFT * 4)
+        # -----------------------------
+        # RIGHT: transformed structure
+        # -----------------------------
+        right_shape = Polygon(
+            [-1.2, -0.9, 0],
+            [ 1.2, -0.9, 0],
+            [ 2.0,  0.9, 0],
+            [-0.4,  0.9, 0],
+            stroke_color=WHITE,
+            stroke_width=3
+        ).shift(RIGHT * 3)
 
-        # =================================================
-        # RIGHT SPACE — CONSISTENCY (delayed, calmer)
-        # =================================================
-        right_plane = NumberPlane(
-            x_range=[-6, 6, 1],
-            y_range=[-4, 4, 1],
-            background_line_style={
-                "stroke_color": BLUE_E,
-                "stroke_opacity": 0.25,
-                "stroke_width": 1,
-            },
-        ).shift(RIGHT * 4)
+        # -----------------------------
+        # STEP 1 — Birth of structure
+        # -----------------------------
+        self.play(
+            Create(left_shape),
+            run_time=0.8
+        )
+        self.wait(0.3)
 
-        right_axes = Axes(
-            x_range=[-6, 6],
-            y_range=[-4, 4],
-            axis_config={"stroke_opacity": 0.45},
-        ).shift(RIGHT * 4)
+        # -----------------------------
+        # STEP 2 — Causal motion (ghost)
+        # -----------------------------
+        ghost = left_shape.copy()
+        ghost.set_stroke(color=BLUE, opacity=0.5)
 
-        # =================================================
-        # SUBTLE DIVIDER (PERCEPTUAL ANCHOR)
-        # =================================================
-        divider = Line(
-            UP * 5,
-            DOWN * 5,
-            stroke_color=GRAY,
-            stroke_opacity=0.15,
-            stroke_width=2,
+        self.add(ghost)
+        self.play(
+            ghost.animate.shift(RIGHT * 6),
+            run_time=0.9,
+            rate_func=smooth
         )
 
-        # -------------------------------------------------
-        # BASELINE (STATIC REFERENCE)
-        # -------------------------------------------------
-        self.add(
-            left_plane,
-            left_axes,
-            right_plane,
-            right_axes,
-            divider
+        # -----------------------------
+        # STEP 3 — Resolve transformation
+        # -----------------------------
+        self.play(
+            Transform(ghost, right_shape),
+            run_time=0.6
         )
+
+        self.remove(ghost)
+        self.add(right_shape)
+
+        # -----------------------------
+        # STEP 4 — Emphasis pulse (attention lock)
+        # -----------------------------
+        self.play(
+            right_shape.animate.set_stroke(width=5),
+            run_time=0.25
+        )
+        self.play(
+            right_shape.animate.set_stroke(width=3),
+            run_time=0.25
+        )
+
         self.wait(0.6)
-
-        # =================================================
-        # TRANSFORMATION MATRICES (SAME RULE)
-        # =================================================
-        A1 = [[1.25, 0.0],
-              [0.0, 1.0]]
-
-        A2 = [[1.0, 0.6],
-              [0.0, 1.0]]
-
-        # =================================================
-        # LEFT: RULE ACTS FIRST (CAUSE)
-        # =================================================
-        self.play(
-            left_plane.animate.apply_matrix(A1),
-            left_axes.animate.apply_matrix(A1),
-            run_time=1.4,
-            rate_func=linear,
-        )
-
-        self.play(
-            left_plane.animate.apply_matrix(A2),
-            left_axes.animate.apply_matrix(A2),
-            run_time=1.6,
-            rate_func=linear,
-        )
-
-        # =================================================
-        # RIGHT: SAME RULE, DELAYED (CONSISTENCY)
-        # =================================================
-        self.play(
-            right_plane.animate.apply_matrix(A1),
-            right_axes.animate.apply_matrix(A1),
-            run_time=1.4,
-            rate_func=linear,
-        )
-
-        self.play(
-            right_plane.animate.apply_matrix(A2),
-            right_axes.animate.apply_matrix(A2),
-            run_time=1.6,
-            rate_func=linear,
-        )
-
-        # =================================================
-        # HOLD — BRAIN CONNECTS BOTH SIDES
-        # =================================================
-        self.wait(1.0)
