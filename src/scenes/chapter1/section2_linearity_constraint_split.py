@@ -1,41 +1,99 @@
 from manim import *
 
-config.disable_caching = False
-
-
 class Section2LinearityConstraintSplit(Scene):
     def construct(self):
-        # --- Panels ---
-        left_frame = Rectangle(
-            width=6.5, height=4,
-            stroke_width=2
-        ).shift(LEFT * 3.5)
+        # -----------------------------
+        # GLOBAL SETTINGS (SAFE)
+        # -----------------------------
+        self.camera.background_color = BLACK
 
-        right_frame = Rectangle(
-            width=6.5, height=4,
-            stroke_width=2
-        ).shift(RIGHT * 3.5)
+        stroke_main = 3
+        stroke_box = 2
+        arrow_scale = 1.2
 
-        self.play(Create(left_frame), Create(right_frame), run_time=0.8)
+        # -----------------------------
+        # SPLIT PANELS
+        # -----------------------------
+        left_panel = Rectangle(
+            width=6.5, height=4.5,
+            stroke_color=WHITE,
+            stroke_width=stroke_box
+        ).shift(LEFT * 3.6)
 
-        # --- Left: Non-linear intuition ---
-        v1 = Arrow(ORIGIN, RIGHT * 1.8, buff=0).shift(LEFT * 3.5)
-        v2 = Arrow(v1.get_end(), UP * 1.2 + RIGHT * 0.6, buff=0)
-        v_sum = CurvedArrow(
-            ORIGIN, v2.get_end(),
-            angle=PI / 3
-        ).shift(LEFT * 3.5)
+        right_panel = Rectangle(
+            width=6.5, height=4.5,
+            stroke_color=WHITE,
+            stroke_width=stroke_box
+        ).shift(RIGHT * 3.6)
 
-        self.play(Create(v1), run_time=0.6)
-        self.play(Create(v2), run_time=0.6)
-        self.play(Create(v_sum), run_time=0.8)
+        self.play(Create(left_panel), Create(right_panel), run_time=0.8)
 
-        # --- Right: Linearity constraint ---
-        r1 = Arrow(ORIGIN, RIGHT * 1.8, buff=0).shift(RIGHT * 3.5)
-        r2 = Arrow(ORIGIN, RIGHT * 1.2, buff=0).shift(RIGHT * 3.5)
-        r_sum = Arrow(ORIGIN, RIGHT * 3.0, buff=0).shift(RIGHT * 3.5)
+        # -----------------------------
+        # LEFT: NON-LINEAR / FREE INPUTS
+        # -----------------------------
+        origin_L = left_panel.get_center()
 
-        self.play(Create(r1), Create(r2), run_time=0.6)
-        self.play(Transform(VGroup(r1, r2), r_sum), run_time=1.0)
+        free_arrow_1 = Arrow(
+            origin_L,
+            origin_L + RIGHT * 1.4,
+            buff=0,
+            stroke_width=stroke_main
+        )
 
+        free_arrow_2 = CurvedArrow(
+            origin_L + RIGHT * 1.4,
+            origin_L + UP * 1.3,
+            angle=PI / 3,
+            stroke_width=stroke_main
+        )
+
+        free_arrow_3 = Arrow(
+            origin_L + RIGHT * 1.4,
+            origin_L + RIGHT * 2.8 + UP * 1.4,
+            buff=0,
+            stroke_width=stroke_main
+        )
+
+        self.play(
+            GrowArrow(free_arrow_1),
+            run_time=0.6
+        )
+        self.play(
+            Create(free_arrow_2),
+            run_time=0.6
+        )
+        self.play(
+            GrowArrow(free_arrow_3),
+            run_time=0.6
+        )
+
+        # -----------------------------
+        # TRANSFER ARROW (CONSTRAINT)
+        # -----------------------------
+        transfer_arrow = Arrow(
+            left_panel.get_right(),
+            right_panel.get_left(),
+            buff=0.15,
+            stroke_width=stroke_main
+        )
+
+        self.play(GrowArrow(transfer_arrow), run_time=0.6)
+
+        # -----------------------------
+        # RIGHT: LINEAR CONSTRAINT
+        # -----------------------------
+        origin_R = right_panel.get_center()
+
+        constrained_arrow = Arrow(
+            origin_R,
+            origin_R + RIGHT * 3.2,
+            buff=0,
+            stroke_width=stroke_main
+        )
+
+        self.play(GrowArrow(constrained_arrow), run_time=0.8)
+
+        # -----------------------------
+        # HOLD (NO LAG)
+        # -----------------------------
         self.wait(0.6)
