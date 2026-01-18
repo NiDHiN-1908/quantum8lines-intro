@@ -51,14 +51,31 @@ class Chapter1BirthOfStructureSplit(Scene):
             axis_config={"stroke_opacity": 0.45},
         ).shift(RIGHT * 4)
 
+        # =================================================
+        # SUBTLE DIVIDER (PERCEPTUAL ANCHOR)
+        # =================================================
+        divider = Line(
+            UP * 5,
+            DOWN * 5,
+            stroke_color=GRAY,
+            stroke_opacity=0.15,
+            stroke_width=2,
+        )
+
         # -------------------------------------------------
-        # BASELINE (nothing moves yet)
+        # BASELINE (STATIC REFERENCE)
         # -------------------------------------------------
-        self.add(left_plane, left_axes, right_plane, right_axes)
+        self.add(
+            left_plane,
+            left_axes,
+            right_plane,
+            right_axes,
+            divider
+        )
         self.wait(0.6)
 
         # =================================================
-        # TRANSFORMATION MATRICES (same rule)
+        # TRANSFORMATION MATRICES (SAME RULE)
         # =================================================
         A1 = [[1.25, 0.0],
               [0.0, 1.0]]
@@ -67,7 +84,7 @@ class Chapter1BirthOfStructureSplit(Scene):
               [0.0, 1.0]]
 
         # =================================================
-        # LEFT: RULE ACTS FIRST (cause)
+        # LEFT: RULE ACTS FIRST (CAUSE)
         # =================================================
         self.play(
             left_plane.animate.apply_matrix(A1),
@@ -84,7 +101,7 @@ class Chapter1BirthOfStructureSplit(Scene):
         )
 
         # =================================================
-        # RIGHT: SAME RULE, DELAYED (consistency)
+        # RIGHT: SAME RULE, DELAYED (CONSISTENCY)
         # =================================================
         self.play(
             right_plane.animate.apply_matrix(A1),
@@ -101,6 +118,6 @@ class Chapter1BirthOfStructureSplit(Scene):
         )
 
         # =================================================
-        # HOLD — let the brain connect them
+        # HOLD — BRAIN CONNECTS BOTH SIDES
         # =================================================
         self.wait(1.0)
