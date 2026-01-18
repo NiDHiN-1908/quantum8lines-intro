@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
 from manim import *
 from core.chapter_title import chapter_title
 
@@ -14,7 +18,12 @@ class Chapter2EigenInvariance(Scene):
         moving1 = Vector([1, 1], color=BLUE)
         moving2 = Vector([-1, 1], color=BLUE)
 
-        self.play(GrowArrow(invariant), GrowArrow(moving1), GrowArrow(moving2), run_time=1.0)
+        self.play(
+            GrowArrow(invariant),
+            GrowArrow(moving1),
+            GrowArrow(moving2),
+            run_time=1.0
+        )
 
         matrix = [[1.2, 0.4], [0, 1]]
 

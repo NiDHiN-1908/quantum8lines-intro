@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
 from manim import *
 from core.chapter_title import chapter_title
 
@@ -12,7 +16,6 @@ class Chapter1LinearStructure(Scene):
             y_range=[-3, 3, 1],
             background_line_style={"stroke_opacity": 0.35}
         )
-
         self.play(Create(grid), run_time=1.0)
 
         deformed = grid.copy().apply_matrix([[1, 1], [0, 1]])

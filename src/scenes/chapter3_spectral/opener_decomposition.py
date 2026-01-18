@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
 from manim import *
 from core.chapter_title import chapter_title
 
@@ -26,7 +30,12 @@ class Chapter3SpectralDecomposition(Scene):
             run_time=1.4
         )
 
-        self.play(FadeOut(v3), v1.animate.set_color(YELLOW), v2.animate.set_color(YELLOW), run_time=0.8)
+        self.play(
+            FadeOut(v3),
+            v1.animate.set_color(YELLOW),
+            v2.animate.set_color(YELLOW),
+            run_time=0.8
+        )
 
         eq = MathTex("A = P D P^{-1}").to_edge(DOWN)
         self.play(FadeIn(eq), run_time=0.6)
